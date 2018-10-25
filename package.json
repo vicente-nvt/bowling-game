@@ -4,7 +4,7 @@
   "description": "",
   "main": "tests.js",
   "scripts": {
-    "test": "jasmine ./tests.js"
+    "test": "jasmine ./tests/*.js"
   },
   "repository": {
     "type": "git",

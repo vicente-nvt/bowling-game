@@ -1,4 +1,4 @@
-var Bowling = require("./bowling")();
+var Bowling = require("../domain/bowling")();
 
 describe("Bowling tests", () => {
     
@@ -27,7 +27,7 @@ describe("Bowling tests", () => {
         expect(scoreExpected).toBe(game.getScore());
     });
 
-    it("should return the score only for completed frames", () => {
+    it("should return the score for completed frames", () => {
         var pinsOfFirstThrow = 3;
         var pinsOfSecondThrow = 1;
         var pinsOfThirdThrow = 9;
@@ -38,5 +38,29 @@ describe("Bowling tests", () => {
         game.addThrow(pinsOfThirdThrow);
 
         expect(scoreExpected).toBe(game.getScore());
+    });
+
+    it("should return the score for a spare only when the next ball is thrown", () => {
+        var scoreExpected = 0;
+        var pinsOfFirstThrow = 9;
+        var pinsOfSecondThrow = 1;
+
+        game.addThrow(pinsOfFirstThrow);
+        game.addThrow(pinsOfSecondThrow);
+
+        expect(scoreExpected).toBe(game.getScore());
+    });
+
+    it("should return the score for a spare after the next ball is thrown", () => {
+        var scoreExpected = 13;
+        var pinsOfFirstThrow = 9;
+        var pinsOfSecondThrow = 1;
+        var pinsOfThirdThrow = 3;
+
+        game.addThrow(pinsOfFirstThrow);
+        game.addThrow(pinsOfSecondThrow);
+        game.addThrow(pinsOfThirdThrow);
+
+        expect(scoreExpected).toBe(game.getScore());
     })
-})
+});
