@@ -25,18 +25,53 @@ class Bowling {
         var score = 0;
         this._frames.forEach((frame) => {
 
-            if (frame.isStrike() && this.nextFrameIsComplete(frame))
-                score += 10 + this.firstThrowOfNextFrame(frame) + this.secondThrowOfNextFrame(frame);
-            else if (frame.isSpare() && this.hasNextFrame(frame))
-                score += 10 + this.firstThrowOfNextFrame(frame);
-            else if (frame.isComplete() && !frame.isStrike())
-                score += frame.getFirstThrow() + frame.getSecondThrow();
+            if (this.isStrike(frame)) 
+                score += this.scoreStrike(frame);
+            else if (this.isSpare(frame))
+                score += this.scoreSpare(frame);
+            else if (this.isNormalFrame(frame))
+                score += this.scoreNormalFrame(frame);
         });
         return score;
     }
 
+    isNormalFrame(frame) {
+        return frame.hasTwoThrows() && !frame.isStrike() && !frame.isSpare();
+    }
+
+    isSpare(frame) {
+        return frame.isSpare() && (this.hasNextFrame(frame) || this.isLastFrame(frame));
+    }
+
+    isStrike(frame) {
+        return frame.isStrike() && (this.nextFrameIsComplete(frame) || this.isLastFrame(frame));
+    }
+
+    scoreNormalFrame(frame) {
+        return frame.getFirstThrow() + frame.getSecondThrow();
+    }
+
+    scoreSpare(frame) {
+        if (this.isLastFrame(frame))
+            return this.sumOfThreeThrowsOfLastFrame(frame);
+
+        return frame.getFirstThrow() + frame.getSecondThrow() + this.firstThrowOfNextFrame(frame);
+    }
+
+    scoreStrike(frame) {
+        if (this.isLastFrame(frame))
+            return this.sumOfThreeThrowsOfLastFrame(frame);
+
+        return frame.getFirstThrow() + this.firstThrowOfNextFrame(frame) + this.secondThrowOfNextFrame(frame);
+    }
+
+    sumOfThreeThrowsOfLastFrame(frame){
+        return frame.getFirstThrow() + frame.getSecondThrow() + frame.getThirdThrow();
+    }
+
     secondThrowOfNextFrame(currentFrame){
-        return this._frames[this.indexOfNextFrame(currentFrame)].getSecondThrow();
+        var nextFrame = this._frames[this.indexOfNextFrame(currentFrame)];
+        return nextFrame.isStrike() ? this._frames[this.indexOfNextFrame(nextFrame)].getFirstThrow() : nextFrame.getSecondThrow();
     }
 
     firstThrowOfNextFrame(currentFrame) {
@@ -52,7 +87,8 @@ class Bowling {
     }
 
     nextFrameIsComplete(currentFrame) {
-        return this.hasNextFrame(currentFrame) && this._frames[this.indexOfNextFrame(currentFrame)].isComplete();
+        var nextFrame = this._frames[this.indexOfNextFrame(currentFrame)];
+        return this.hasNextFrame(currentFrame) && (nextFrame.hasTwoThrows() || nextFrame.isStrike());
     }
     
     isLastFrame(currentFrame) {

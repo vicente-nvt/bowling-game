@@ -1,28 +1,34 @@
 class Frame {
-    constructor(){
+    constructor() {
         this._throws = new Array();
     }
     
-    addThrow(pins){
+    addThrow(pins) {
+        if (this.hasTwoThrows() && !(this.isSpare() || this.isStrike()))
+            throw new Error("It isn't possible to add a third throw without a mark");
+
         this._throws.push(pins);
     }
 
-    getFirstThrow(){
+    getFirstThrow() {
         return this._throws[0];
     }
 
-    getSecondThrow(){
+    getSecondThrow() {
         return this._throws[1];
+    }
+
+    getThirdThrow() {
+        return this._throws[2];
     }
 
     isSpare() {
         return this._throws[0] + this._throws[1] === 10;
     }
 
-    isComplete(){
-        return this.isStrike() || (!this.isSpare()
-        && this.getFirstThrow() != undefined 
-        && this.getSecondThrow() != undefined);
+    hasTwoThrows(){
+        return this.getFirstThrow() != undefined 
+            && this.getSecondThrow() != undefined;
     }
 
     isStrike(){
