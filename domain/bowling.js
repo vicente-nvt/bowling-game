@@ -12,7 +12,11 @@ class Bowling {
             this._frames.push(this._currentFrame);
         }
 
-        this._isFirstThrowOfFrame = !this._isFirstThrowOfFrame;
+        if (pins != 10)
+            this._isFirstThrowOfFrame = !this._isFirstThrowOfFrame;
+
+        if (this.isLastFrame(this._currentFrame))
+            this._isFirstThrowOfFrame = false;
 
         this._currentFrame.addThrow(pins);
     }
@@ -21,14 +25,18 @@ class Bowling {
         var score = 0;
         this._frames.forEach((frame) => {
 
-            if (frame.isSpare() && this.hasNextFrame(frame)){
+            if (frame.isStrike() && this.nextFrameIsComplete(frame))
+                score += 10 + this.firstThrowOfNextFrame(frame) + this.secondThrowOfNextFrame(frame);
+            else if (frame.isSpare() && this.hasNextFrame(frame))
                 score += 10 + this.firstThrowOfNextFrame(frame);
-            }
-            else if (frame.isComplete()){
+            else if (frame.isComplete() && !frame.isStrike())
                 score += frame.getFirstThrow() + frame.getSecondThrow();
-            }
         });
         return score;
+    }
+
+    secondThrowOfNextFrame(currentFrame){
+        return this._frames[this.indexOfNextFrame(currentFrame)].getSecondThrow();
     }
 
     firstThrowOfNextFrame(currentFrame) {
@@ -41,6 +49,14 @@ class Bowling {
 
     hasNextFrame(currentFrame){
         return this._frames[this.indexOfNextFrame(currentFrame)] != undefined;
+    }
+
+    nextFrameIsComplete(currentFrame) {
+        return this.hasNextFrame(currentFrame) && this._frames[this.indexOfNextFrame(currentFrame)].isComplete();
+    }
+    
+    isLastFrame(currentFrame) {
+        return this._frames.indexOf(currentFrame) == 9;
     }
 }
 

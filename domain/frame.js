@@ -1,13 +1,9 @@
 class Frame {
     constructor(){
         this._throws = new Array();
-        this._score = 0;
     }
     
     addThrow(pins){
-        if (this._throws.length === 2)
-            throw new Error("It isn't possible to add a third throw");
-
         this._throws.push(pins);
     }
 
@@ -24,9 +20,13 @@ class Frame {
     }
 
     isComplete(){
-        return !this.isSpare() 
+        return this.isStrike() || (!this.isSpare()
         && this.getFirstThrow() != undefined 
-        && this.getSecondThrow() != undefined;
+        && this.getSecondThrow() != undefined);
+    }
+
+    isStrike(){
+        return this._throws[0] == 10;
     }
 }
 
