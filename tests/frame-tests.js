@@ -1,4 +1,4 @@
-var Frame = require("../domain/frame")();
+var Frame = require("../domain/frame");
 
 describe("Frame tests", () => {
 

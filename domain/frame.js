@@ -30,6 +30,4 @@ class Frame {
     }
 }
 
-module.exports = () => {
-    return Frame;
-}
+module.exports = Frame;

@@ -1,4 +1,4 @@
-var Frame = require("../domain/frame")();
+var Frame = require("../domain/frame");
 
 class Bowling {
     constructor() {
@@ -20,14 +20,28 @@ class Bowling {
     getScore() {
         var score = 0;
         this._frames.forEach((frame) => {
-            if (frame.isComplete()){
+
+            if (frame.isSpare() && this.hasNextFrame(frame)){
+                score += 10 + this.firstThrowOfNextFrame(frame);
+            }
+            else if (frame.isComplete()){
                 score += frame.getFirstThrow() + frame.getSecondThrow();
             }
         });
         return score;
     }
+
+    firstThrowOfNextFrame(currentFrame) {
+        return this._frames[this.indexOfNextFrame(currentFrame)].getFirstThrow();
+    }
+
+    indexOfNextFrame(currentFrame) {
+        return this._frames.indexOf(currentFrame) + 1;
+    }
+
+    hasNextFrame(currentFrame){
+        return this._frames[this.indexOfNextFrame(currentFrame)] != undefined;
+    }
 }
 
-module.exports = () => {
-    return Bowling;
-}
+module.exports = Bowling;
