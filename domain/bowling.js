@@ -1,38 +1,31 @@
+var Frame = require("../domain/frame")();
+
 class Bowling {
-    
     constructor() {
-        this._throws = new Array();
-        this._currentThrow = 0;
-        this._score = 0;
+        this._frames = new Array();
         this._isFirstThrowOfFrame = true;
     }
+    
     addThrow(pins) {
-        this._throws.push(pins);
-
-        if (!this._isFirstThrowOfFrame && !this.isSpare(this._currentThrow)) {
-            this._score += pins + this.getThrow(this._currentThrow - 1);
-            this._isFirstThrowOfFrame = true;
-        }
-        else {
-            if (this.isSpare(this._currentThrow -1)) 
-                this._score += pins + 10;
-            this._isFirstThrowOfFrame = false;
+        if (this._isFirstThrowOfFrame) {
+            this._currentFrame = new Frame();
+            this._frames.push(this._currentFrame);
         }
 
-        this._currentThrow++;
-    }
+        this._isFirstThrowOfFrame = !this._isFirstThrowOfFrame;
 
-    getThrow(throwNumber) {
-        return this._throws[throwNumber];
+        this._currentFrame.addThrow(pins);
     }
 
     getScore() {
-        return this._score;
+        var score = 0;
+        this._frames.forEach((frame) => {
+            if (frame.isComplete()){
+                score += frame.getFirstThrow() + frame.getSecondThrow();
+            }
+        });
+        return score;
     }
-
-    isSpare(numberOfThrow) { 
-        return this.getThrow(numberOfThrow - 1) + this.getThrow(numberOfThrow)  === 10;
-    };
 }
 
 module.exports = () => {

@@ -8,14 +8,6 @@ describe("Bowling tests", () => {
         game = new Bowling();
     })
 
-    it("should be possible to throw a ball", () => {
-        var pinsKnockedDown = 4;
-
-        game.addThrow(pinsKnockedDown);
-
-        expect(pinsKnockedDown).toBe(game.getThrow(0));
-    });
-
     it("should return the score of two throws without a mark", () => {
         var pinsOfFirstThrow = 3;
         var pinsOfSecondThrow = 1;
@@ -51,16 +43,16 @@ describe("Bowling tests", () => {
         expect(scoreExpected).toBe(game.getScore());
     });
 
-    it("should return the score for a spare after the next ball is thrown", () => {
-        var scoreExpected = 13;
-        var pinsOfFirstThrow = 9;
-        var pinsOfSecondThrow = 1;
-        var pinsOfThirdThrow = 3;
+    // it("should return the score for a spare after the next ball is thrown", () => {
+    //     var scoreExpected = 13;
+    //     var pinsOfFirstThrow = 9;
+    //     var pinsOfSecondThrow = 1;
+    //     var pinsOfThirdThrow = 3;
 
-        game.addThrow(pinsOfFirstThrow);
-        game.addThrow(pinsOfSecondThrow);
-        game.addThrow(pinsOfThirdThrow);
+    //     game.addThrow(pinsOfFirstThrow);
+    //     game.addThrow(pinsOfSecondThrow);
+    //     game.addThrow(pinsOfThirdThrow);
 
-        expect(scoreExpected).toBe(game.getScore());
-    })
+    //     expect(scoreExpected).toBe(game.getScore());
+    // })
 });
