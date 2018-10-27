@@ -7,44 +7,50 @@ class Bowling {
     }
     
     addThrow(pins) {
-        if (this._isFirstThrowOfFrame) {
+        this.checkFrame();
+        this._currentFrame.addThrow(pins);
+    }
+
+    checkFrame() {
+        if (this.shouldCreateNewFrame()) {
             this._currentFrame = new Frame();
             this._frames.push(this._currentFrame);
         }
+    }
 
-        if (pins != 10)
-            this._isFirstThrowOfFrame = !this._isFirstThrowOfFrame;
+    shouldCreateNewFrame() {
+        if (this._currentFrame == undefined)
+            return true;
 
         if (this.isLastFrame(this._currentFrame))
-            this._isFirstThrowOfFrame = false;
+            return false;
 
-        this._currentFrame.addThrow(pins);
+        return (this._currentFrame.hasTwoThrows() || this._currentFrame.isStrike());
     }
 
     getScore() {
         var score = 0;
         this._frames.forEach((frame) => {
-
-            if (this.isStrike(frame)) 
+            if (this.frameWasStrike(frame)) 
                 score += this.scoreStrike(frame);
-            else if (this.isSpare(frame))
+            else if (this.frameWasSpare(frame))
                 score += this.scoreSpare(frame);
-            else if (this.isNormalFrame(frame))
+            else if (this.wasNormalFrame(frame))
                 score += this.scoreNormalFrame(frame);
         });
         return score;
     }
 
-    isNormalFrame(frame) {
+    wasNormalFrame(frame) {
         return frame.hasTwoThrows() && !frame.isStrike() && !frame.isSpare();
     }
 
-    isSpare(frame) {
-        return frame.isSpare() && (this.hasNextFrame(frame) || this.isLastFrame(frame));
+    frameWasSpare(frame) {
+        return frame.isSpare() && (this.isLastFrame(frame) || this.hasNextFrame(frame));
     }
 
-    isStrike(frame) {
-        return frame.isStrike() && (this.nextFrameIsComplete(frame) || this.isLastFrame(frame));
+    frameWasStrike(frame) {
+        return frame.isStrike() && (this.isLastFrame(frame) || this.nextFrameIsComplete(frame));
     }
 
     scoreNormalFrame(frame) {
@@ -52,47 +58,51 @@ class Bowling {
     }
 
     scoreSpare(frame) {
-        if (this.isLastFrame(frame))
-            return this.sumOfThreeThrowsOfLastFrame(frame);
-
-        return frame.getFirstThrow() + frame.getSecondThrow() + this.firstThrowOfNextFrame(frame);
+        return frame.getFirstThrow() + frame.getSecondThrow() + this.getNextBall(frame);
     }
 
     scoreStrike(frame) {
+        return frame.getFirstThrow() + this.getNextTwoBalls(frame);
+    }
+
+    getNextBall(frame) {
         if (this.isLastFrame(frame))
-            return this.sumOfThreeThrowsOfLastFrame(frame);
+            return frame.getThirdThrow();
 
-        return frame.getFirstThrow() + this.firstThrowOfNextFrame(frame) + this.secondThrowOfNextFrame(frame);
+        return this.nextFrame(frame).getFirstThrow();
     }
 
-    sumOfThreeThrowsOfLastFrame(frame){
-        return frame.getFirstThrow() + frame.getSecondThrow() + frame.getThirdThrow();
+    getNextTwoBalls(frame) {
+        if (this.isLastFrame(frame))
+            return frame.getSecondThrow() + frame.getThirdThrow();
+
+        if (this.hasNextFrame(frame) && this.nextFrame(frame).isStrike()){
+            if (this.isLastFrame(this.nextFrame(frame)))
+                return this.nextFrame(frame).getFirstThrow() + this.nextFrame(frame).getSecondThrow();
+            else
+            return this.nextFrame(frame).getFirstThrow() + this.nextFrame(this.nextFrame(frame)).getFirstThrow();
+        }
+
+        return this.nextFrame(frame).getFirstThrow() + this.nextFrame(frame).getSecondThrow();
     }
 
-    secondThrowOfNextFrame(currentFrame){
-        var nextFrame = this._frames[this.indexOfNextFrame(currentFrame)];
-        return nextFrame.isStrike() ? this._frames[this.indexOfNextFrame(nextFrame)].getFirstThrow() : nextFrame.getSecondThrow();
-    }
-
-    firstThrowOfNextFrame(currentFrame) {
-        return this._frames[this.indexOfNextFrame(currentFrame)].getFirstThrow();
-    }
-
-    indexOfNextFrame(currentFrame) {
-        return this._frames.indexOf(currentFrame) + 1;
+    nextFrame(currentFrame) {
+        return this._frames[this._frames.indexOf(currentFrame) + 1];
     }
 
     hasNextFrame(currentFrame){
-        return this._frames[this.indexOfNextFrame(currentFrame)] != undefined;
+        return this.nextFrame(currentFrame) != undefined;
     }
 
     nextFrameIsComplete(currentFrame) {
-        var nextFrame = this._frames[this.indexOfNextFrame(currentFrame)];
-        return this.hasNextFrame(currentFrame) && (nextFrame.hasTwoThrows() || nextFrame.isStrike());
+        return this.hasNextFrame(currentFrame) &&
+               (this.nextFrame(currentFrame).hasTwoThrows() ||
+                this.nextFrame(currentFrame).isStrike());
     }
-    
+
     isLastFrame(currentFrame) {
-        return this._frames.indexOf(currentFrame) == 9;
+        var indexOfLastFrame = 9;
+        return this._frames.indexOf(currentFrame) == indexOfLastFrame;
     }
 }
 
