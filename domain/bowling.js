@@ -3,29 +3,32 @@ var Frame = require("../domain/frame");
 class Bowling {
     constructor() {
         this._frames = new Array();
-        this._isFirstThrowOfFrame = true;
     }
     
     addThrow(pins) {
-        this.checkFrame();
-        this._currentFrame.addThrow(pins);
+        this.getFrame().addThrow(pins);
     }
 
-    checkFrame() {
+    getFrame() {
         if (this.shouldCreateNewFrame()) {
-            this._currentFrame = new Frame();
-            this._frames.push(this._currentFrame);
+            this._frames.push(new Frame());
         }
+
+        return this.currentFrame();
+    }
+
+    currentFrame(){
+        return this._frames[this._frames.length - 1];
     }
 
     shouldCreateNewFrame() {
-        if (this._currentFrame == undefined)
+        if (this.currentFrame() == undefined)
             return true;
 
-        if (this.isLastFrame(this._currentFrame))
+        if (this.isLastFrame(this.currentFrame()))
             return false;
 
-        return (this._currentFrame.hasTwoThrows() || this._currentFrame.isStrike());
+        return (this.currentFrame().hasTwoThrows() || this.currentFrame().isStrike());
     }
 
     getScore() {
@@ -58,21 +61,21 @@ class Bowling {
     }
 
     scoreSpare(frame) {
-        return frame.getFirstThrow() + frame.getSecondThrow() + this.getNextBall(frame);
+        return frame.getFirstThrow() + frame.getSecondThrow() + this.getNextBallForSpare(frame);
     }
 
     scoreStrike(frame) {
-        return frame.getFirstThrow() + this.getNextTwoBalls(frame);
+        return frame.getFirstThrow() + this.getNextTwoBallsForStrike(frame);
     }
 
-    getNextBall(frame) {
+    getNextBallForSpare(frame) {
         if (this.isLastFrame(frame))
             return frame.getThirdThrow();
 
         return this.nextFrame(frame).getFirstThrow();
     }
 
-    getNextTwoBalls(frame) {
+    getNextTwoBallsForStrike(frame) {
         if (this.isLastFrame(frame))
             return frame.getSecondThrow() + frame.getThirdThrow();
 
