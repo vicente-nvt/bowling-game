@@ -37,8 +37,8 @@ class Bowling {
         return (this.currentFrame().hasTwoThrows() || this.currentFrame().isStrike());
     }
 
-    getScore() {
-        return this._scorer.getScore(this._frames);
+    getScore(frameNumber) {
+        return this._scorer.getScore(this._frames, frameNumber);
     }
 
 }

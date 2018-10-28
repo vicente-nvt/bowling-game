@@ -1,18 +1,20 @@
 class Scorer {
 
-    getScore(frames) {
+    getScore(frames, frameNumber) {
         this._frames = frames;
         var score = 0;
 
-        frames.forEach((frame) => {
+        for (var frameIndex = 0; frameIndex < frameNumber; frameIndex++){
+            var frame = frames[frameIndex];
+
             if (this.frameWasStrike(frame)) 
                 score += this.scoreStrike(frame);
             else if (this.frameWasSpare(frame))
                 score += this.scoreSpare(frame);
             else if (this.wasNormalFrame(frame))
                 score += this.scoreNormalFrame(frame);
-        });
-        
+        }
+
         return score;
     }
 
