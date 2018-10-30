@@ -23,10 +23,6 @@ class Bowling {
         return this._frames[this._frames.length - 1];
     }
 
-    isLastFrame(){
-        return this._frames.length == 10;
-    }
-    
     shouldCreateNewFrame() {
         if (this.currentFrame() == undefined)
             return true;
@@ -35,6 +31,10 @@ class Bowling {
             return false;
 
         return (this.currentFrame().hasTwoThrows() || this.currentFrame().isStrike());
+    }
+
+    isLastFrame(){
+        return this._frames.length == 10;
     }
 
     getScore(frameNumber) {

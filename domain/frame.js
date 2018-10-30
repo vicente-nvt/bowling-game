@@ -23,7 +23,7 @@ class Frame {
     }
 
     isSpare() {
-        return this._throws[0] + this._throws[1] === 10;
+        return this.getFirstThrow() + this.getSecondThrow() === 10;
     }
 
     hasTwoThrows(){
@@ -32,7 +32,7 @@ class Frame {
     }
 
     isStrike(){
-        return this._throws[0] == 10;
+        return this.getFirstThrow() == 10;
     }
 }
 
