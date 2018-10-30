@@ -30,12 +30,11 @@ class Scorer {
         if (this.isLastFrame(frame))
             return frame.getSecondThrow() + frame.getThirdThrow();
 
-        if (this.hasNextFrame(frame) && this.nextFrame(frame).isStrike()){
-            if (this.isLastFrame(this.nextFrame(frame)))
-                return this.nextFrame(frame).getFirstThrow() + this.nextFrame(frame).getSecondThrow();
-            else
-                return this.nextFrame(frame).getFirstThrow() + this.nextFrame(this.nextFrame(frame)).getFirstThrow();
-        }
+        if (!this.hasNextFrame(frame))
+            return 0;
+
+        if (this.nextFrame(frame).isStrike() && !this.isLastFrame(this.nextFrame(frame)))
+            return this.nextFrame(frame).getFirstThrow() + this.nextFrame(this.nextFrame(frame)).getFirstThrow();
 
         return this.nextFrame(frame).getFirstThrow() + this.nextFrame(frame).getSecondThrow();
     }
